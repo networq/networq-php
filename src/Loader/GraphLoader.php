@@ -53,7 +53,7 @@ class GraphLoader
         $graph->addPackage($package);
         foreach ($package->getDependencies() as $dep) {
             if (!$graph->hasPackage($dep->getName())) {
-                $packageFilename = str_replace(':', '/', $dep->getName()) . '/package.yaml';
+                $packageFilename = str_replace(':', '/', $dep->getName()) . '-package/package.yaml';
 
                 // Check local project packages/ directory
                 $depFilename = dirname($filename) . '/packages/' . $packageFilename;
