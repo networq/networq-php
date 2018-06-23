@@ -2,6 +2,7 @@
 
 namespace Networq\Model;
 
+use RuntimeException;
 use Twig_Environment;
 use Twig_SimpleFilter;
 
@@ -120,7 +121,7 @@ class Graph
     public function getPackage($name)
     {
         if (!$this->hasPackage($name)) {
-            throw new RuntimeException("Unknown package: " . $package);
+            throw new RuntimeException("Unknown package: " . $name);
         }
         return $this->packages[$name];
     }
