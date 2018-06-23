@@ -1,0 +1,5 @@
+example:games:base:
+  name: Link
+  image: https://media.nintendo.com/nintendo/bin/-ym9fv73emSxMQb2yQZQmxO2w21bhSco/l5W8tI1fxPyScgdmZfJX7TPcjvRsF-kV.png
+example:games:character:
+  debut: example:games:loz

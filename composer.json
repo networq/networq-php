@@ -1,0 +1,24 @@
+{
+    "name": "networq/networq",
+    "description": "Networq library",
+    "homepage": "http://www.github.com/networq/networq-php",
+    "keywords": ["networq", "graph", "node", "linkorb"],
+    "type": "library",
+    "authors": [
+        {
+            "name": "LinkORB Engineering",
+            "email": "engineering@linkorb.com",
+            "role": "Development"
+        }
+    ],
+    "require": {
+        "php": ">=7.1",
+        "symfony/yaml": "^4.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Networq\\": "src/"
+        }
+    },
+    "license": "MIT"
+}

@@ -1,0 +1,13 @@
+example:games:base:
+  name: Super Mario Bros
+
+example:games:game:
+  publisher: Nintendo
+  platform: example:games:nes
+  characters:
+    - example:games:mario
+    - example:games:luigi
+  urls:
+    mario-wiki:
+      example:games:url:
+        target: http://google.com

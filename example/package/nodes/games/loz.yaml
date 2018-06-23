@@ -1,0 +1,8 @@
+example:games:base:
+  name: The Legend of Zelda
+
+example:games:game:
+  publisher: Nintendo
+  platform: example:games:nes
+  characters:
+    - example:games:link

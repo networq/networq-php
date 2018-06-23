@@ -1,0 +1,12 @@
+name: game
+fields:
+  publisher:
+    type: string
+  platform:
+    type: example:games:platform
+
+  characters:
+    type: example:games:character[]
+
+  urls:
+    type: example:games:url[]

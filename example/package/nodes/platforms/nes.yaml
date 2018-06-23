@@ -1,0 +1,4 @@
+example:games:base:
+  name: Nintendo Entertainment System
+example:games:platform:
+  manufacturer: Nintendo

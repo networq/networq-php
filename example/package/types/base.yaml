@@ -1,0 +1,8 @@
+name: base
+fields:
+  name:
+    type: string
+  image:
+    type: string
+  description:
+    type: string

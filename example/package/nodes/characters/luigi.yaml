@@ -1,0 +1,5 @@
+example:games:base:
+  name: Luigi
+  image: http://images.nintendolife.com/news/2012/08/talking_point_the_long_suffering_luigi/attachment/0/large.jpg
+example:games:character:
+  debut: example:games:smb

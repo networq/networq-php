@@ -1,0 +1,8 @@
+example:games:base:
+  name: Donkey Kong
+
+example:games:game:
+  publisher: Nintendo
+  platform: example:games:nes
+  characters:
+    - example:games:mario

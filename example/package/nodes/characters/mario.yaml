@@ -1,0 +1,5 @@
+example:games:base:
+  name: Mario
+  image: https://mario.nintendo.com/assets/img/home/intro/mario-pose2.png
+example:games:character:
+  debut: example:games:smb

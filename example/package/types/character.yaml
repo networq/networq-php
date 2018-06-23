@@ -1,0 +1,7 @@
+name: character
+fields:
+  debut:
+    type: example:games:game
+  games:
+    type: example:games:game[]
+    reverse: characters
