@@ -37,6 +37,9 @@ class PackageLoader
         if (isset($data['dependencies'])) {
             foreach ($data['dependencies'] as $name => $details) {
                 $version = $details;
+                if ($version != 'latest') {
+                    throw new RuntimeException("Package " . $package->getName() . ' requests version `' . $version . '` of ' . $name . '. Only `latest` is currently supported.');
+                }
                 $dependency = new Dependency($name, $version);
                 $package->addDependency($dependency);
             }
