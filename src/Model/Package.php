@@ -8,6 +8,7 @@ class Package
 {
     protected $graph;
     protected $name;
+    protected $description;
     protected $path;
 
     protected $nodes = [];
@@ -16,11 +17,17 @@ class Package
     protected $dependencies = [];
     protected $navNodeNames = [];
 
-    public function __construct(Graph $graph, $name, $path)
+    public function __construct(Graph $graph, array $data, string $path)
     {
         $this->graph = $graph;
-        $this->name = $name;
         $this->path = $path;
+        $this->name = $data['name'];
+        if (!$this->name) {
+            throw new RuntimeException("Package name not defined: " . $path);
+        }
+
+        $this->description = $data['description'] ?? null;
+        $this->license = $data['license'] ?? null;
     }
 
     public function setNavNodeNames($nodeNames)
@@ -45,6 +52,16 @@ class Package
     public function getPath()
     {
         return $this->path;
+    }
+
+    public function getDescription()
+    {
+        return $this->description;
+    }
+
+    public function getLicense()
+    {
+        return $this->license;
     }
 
     public function getGraph()

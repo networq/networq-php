@@ -28,11 +28,8 @@ class PackageLoader
         $yaml = file_get_contents($filename);
         $data = Yaml::parse($yaml);
         $name = $data['name'] ?? null;
-        if (!$name) {
-            throw new RuntimeException("Package name not defined");
-        }
 
-        $package = new Package($graph, $name, $path);
+        $package = new Package($graph, $data, $path);
 
         if (isset($data['dependencies'])) {
             foreach ($data['dependencies'] as $name => $details) {
