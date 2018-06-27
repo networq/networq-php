@@ -21,7 +21,7 @@ class PackageLoader
     public function load(Graph $graph, $filename)
     {
         if (!file_exists($filename)) {
-            throw new RuntimeException("Package file not found");
+            throw new RuntimeException("Package file not found: " . $filename);
         }
         $path = dirname($filename);
 
