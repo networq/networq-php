@@ -47,26 +47,31 @@ class GraphLoader
         return $graph;
     }
 
-    protected function loadPackage($graph, $filename)
+    public function loadPackage($graph, $filename)
     {
         $package = $this->loader->load($graph, $filename);
         $graph->addPackage($package);
+        $envPath = rtrim(getenv('NETWORQ_PATH'), '/');
         foreach ($package->getDependencies() as $dep) {
             if (!$graph->hasPackage($dep->getName())) {
-                $packageFilename = str_replace(':', '/', $dep->getName()) . '-package/package.yaml';
-
-                // Check local project packages/ directory
-                $depFilename = dirname($filename) . '/packages/' . $packageFilename;
-
-                if (!file_exists($depFilename)) {
-                    // Check global NETWORQ_PATH directory
-                    $envPath = getenv('NETWORQ_PATH');
-                    if ($envPath) {
-                        $depFilename = $envPath . '/' . $packageFilename;
+                $filenames = [];
+                $filenames[] = dirname($filename) . '/packages/' . str_replace(':', '/', $dep->getName()) . '-package/package.yaml';
+                $filenames[] = dirname($filename) . '/packages/' . str_replace(':', '/', $dep->getName()) . '/package.yaml';
+                if ($envPath) {
+                    $filenames[] =  $envPath . '/' . str_replace(':', '/', $dep->getName()) . '-package/package.yaml';
+                    $filenames[] =  $envPath . '/' . str_replace(':', '/', $dep->getName()) . '/package.yaml';
+                }
+                $depFilename = null;
+                foreach ($filenames as $f) {
+                    if (file_exists($f)) {
+                        if (!$depFilename) {
+                            $depFilename = $f;
+                        }
                     }
                 }
-                if (!file_exists($depFilename)) {
-                    throw new RuntimeException("Missing dependency: " . $dep->getName());
+                if (!$depFilename) {
+                    print_r($filenames);
+                    throw new RuntimeException("Can't locate dependency package: " . $dep->getName());
                 }
                 $this->loadPackage($graph, $depFilename);
             }
