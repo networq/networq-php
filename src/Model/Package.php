@@ -57,6 +57,17 @@ class Package
         return $this->ownerName . ':' . $this->name;
     }
 
+    public function getFqpnDir()
+    {
+        return $this->ownerName . '/' . $this->name;
+    }
+
+    public function getOwnerName()
+    {
+        return $this->ownerName;
+    }
+
+
     public function getPath()
     {
         return $this->path;
