@@ -26,7 +26,7 @@ class Type
 
     public function getFqtn()
     {
-        return $this->package->getName() . ':' . $this->getName();
+        return $this->package->getFqpn() . ':' . $this->getName();
     }
 
     public function addField(Field $field)

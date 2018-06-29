@@ -8,6 +8,7 @@ class Package
 {
     protected $graph;
     protected $name;
+    protected $ownerName;
     protected $description;
     protected $path;
 
@@ -21,10 +22,17 @@ class Package
     {
         $this->graph = $graph;
         $this->path = $path;
-        $this->name = $data['name'];
-        if (!$this->name) {
+
+        $fqpn = $data['name'];
+        if (!$fqpn) {
             throw new RuntimeException("Package name not defined: " . $path);
         }
+        $part = explode(':', $fqpn);
+        if (count($part)!=2) {
+            throw new RuntimeException("Invalid Fully Qualified Package Name: " . $fqpn);
+        }
+        $this->ownerName = $part[0];
+        $this->name = $part[1];
 
         $this->description = $data['description'] ?? null;
         $this->license = $data['license'] ?? null;
@@ -44,9 +52,9 @@ class Package
         return $nodes;
     }
 
-    public function getName()
+    public function getFqpn()
     {
-        return $this->name;
+        return $this->ownerName . ':' . $this->name;
     }
 
     public function getPath()
@@ -102,7 +110,7 @@ class Package
     public function getType($name)
     {
         if (!$this->hasType($name)) {
-            throw new RuntimeException("Unknown type: " . $this->name . ':' . $name);
+            throw new RuntimeException("Unknown type: " . $this->getFqpn() . ':' . $name);
         }
         return $this->types[$name];
     }

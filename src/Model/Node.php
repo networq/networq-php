@@ -29,7 +29,7 @@ class Node implements ArrayAccess
 
     public function getFqnn()
     {
-        return $this->package->getName() . ':' . $this->name;
+        return $this->package->getFqpn() . ':' . $this->name;
     }
 
     public function __toString()

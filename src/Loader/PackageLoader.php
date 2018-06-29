@@ -35,7 +35,7 @@ class PackageLoader
             foreach ($data['dependencies'] as $name => $details) {
                 $version = $details;
                 if ($version != 'latest') {
-                    throw new RuntimeException("Package " . $package->getName() . ' requests version `' . $version . '` of ' . $name . '. Only `latest` is currently supported.');
+                    throw new RuntimeException("Package " . $package->getFqpn() . ' requests version `' . $version . '` of ' . $name . '. Only `latest` is currently supported.');
                 }
                 $dependency = new Dependency($name, $version);
                 $package->addDependency($dependency);
@@ -76,7 +76,7 @@ class PackageLoader
                             $newNodes = [];
                             foreach ($v as $n=>$d) {
                                 $this->importNode($package, $n, $d);
-                                $newNodes[] = $package->getName() . ':' . $n;
+                                $newNodes[] = $package->getFqpn() . ':' . $n;
                             }
                             $v = $newNodes;
                         }

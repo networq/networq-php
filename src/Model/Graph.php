@@ -28,7 +28,7 @@ class Graph
 
     public function addPackage(Package $package)
     {
-        $this->packages[$package->getName()] = $package;
+        $this->packages[$package->getFqpn()] = $package;
     }
 
     public function hasNode($id)
@@ -152,10 +152,10 @@ class Graph
         $twig->addFilter($filter);
 
         $filter = new Twig_SimpleFilter('packageButton', function (Package $package) {
-            $path = '/packages/' . $package->getName();
+            $path = '/packages/' . $package->getFqpn();
             $o = '<a href="' . $path . '" class="badge badge-secondary">';
             $o .= '<i class="fa fa-book"></i> ';
-            $o .= $package->getName() . "</a>";
+            $o .= $package->getFqpn() . "</a>";
             return $o;
         });
         $twig->addFilter($filter);
@@ -164,7 +164,7 @@ class Graph
         foreach ($this->packages as $package) {
             $path = $package->getPath() . '/templates';
             if (file_exists($path)) {
-                $twig->getLoader()->addPath($path, $package->getName());
+                $twig->getLoader()->addPath($path, $package->getFqpn());
             }
         }
     }
