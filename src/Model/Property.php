@@ -2,6 +2,8 @@
 
 namespace Networq\Model;
 
+use RuntimeException;
+
 class Property
 {
     protected $tag;
@@ -49,6 +51,9 @@ class Property
             $ft = $this->field->getType();
             $ft = str_replace('[]', '', $ft);
             $graph = $this->field->getNodeType()->getPackage()->getGraph();
+            if (!$graph->hasType($ft)) {
+                throw new RuntimeException("Can't reverse property of type " . $ft . ' on field ' . $this->field->getFqfn());
+            }
             $ct = $graph->getType($ft);
             $nodes = $ct->getNodesWhere($ft, $this->field->getReverse(), $this->tag->getNode()->getFqnn());
             return $nodes;

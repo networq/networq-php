@@ -101,6 +101,9 @@ class Graph
 
     public function getType(string $fqtn)
     {
+        if (!$this->hasType($fqtn)) {
+            throw new RuntimeException("Undefined type: " . $fqtn);
+        }
         $fqtn = Fqnn::byFqnn($fqtn);
         $fqpn = $fqtn->getFqpn();
         $package = $this->packages[$fqpn];

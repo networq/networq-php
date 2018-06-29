@@ -19,6 +19,11 @@ class Field
         return $this->name;
     }
 
+    public function getFqfn()
+    {
+        return $this->nodeType->getFqtn() . '.' . $this->getName();
+    }
+
     public function getType()
     {
         return $this->type;
