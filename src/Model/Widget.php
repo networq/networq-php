@@ -52,7 +52,7 @@ class Widget  // implements ArrayAccess
 
     public function getTemplateName()
     {
-        return '@' . $this->package->getName() . '/' . $this->name . '.html.twig';
+        return '@' . $this->package->getFqpn() . '/' . $this->name . '.html.twig';
     }
 
 }
