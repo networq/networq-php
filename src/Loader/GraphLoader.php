@@ -4,6 +4,7 @@ namespace Networq\Loader;
 
 use Networq\Model\Graph;
 use RuntimeException;
+use Connector\Connector;
 
 class GraphLoader
 {
@@ -18,6 +19,13 @@ class GraphLoader
     {
         $name = dirname($filename);
         $graph = new Graph($name);
+        $pdo = null;
+        if (getenv('NETWORQ_PDO')) {
+            $connector = new Connector();
+            $config = $connector->getConfig(getenv('NETWORQ_PDO'));
+            $pdo = $connector->getPdo($config);
+            $graph->setPdo($pdo);
+        }
 
         // 1. recursively load all package definitions
         $rootPackage = $this->loadPackage($graph, $filename);
@@ -28,14 +36,19 @@ class GraphLoader
             $this->loader->loadTypes($package);
         }
 
-        // 3. load nodes from packages
+        // 3a. load nodes from packages
         foreach ($graph->getPackages() as $package) {
             // Load standard /nodes
             $this->loader->loadNodes($package);
 
         }
 
-        // 3b. Optionally load example nodes from rootPackage
+        // 3b. load nodes from database
+        if ($pdo) {
+            $this->loader->loadDatabaseNodes($rootPackage, $pdo);
+        }
+
+        // 3c. Optionally load example nodes from rootPackage
         if (getenv('NETWORQ_EXAMPLES')) {
             $this->loader->loadNodes($rootPackage, '/examples');
         }
