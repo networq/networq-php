@@ -179,68 +179,32 @@ class Graph
         $this->pdo = $pdo;
     }
 
-    public function tagNode(Node $node, $fqtn)
+    public function persist($fqnn, $data)
     {
-        $fqnn = $node->getFqnn();
-        if ($node->hasTag($fqtn)) {
-            throw new RuntimeException('Node ' . $fqnn . ' is already tagged ' . $fqtn);
-        }
-
-        $stmt = $this->pdo->prepare(
-            'INSERT INTO tag
-            (fqnn, fqtn) VALUES(:fqnn, :fqtn)
-            '
-        );
-        $stmt->execute(
-            [
-                'fqnn' => $fqnn,
-                'fqtn' => $fqtn,
-            ]
-        );
-    }
-
-    public function setNodeProperty(Node $node, $fqtn, $field, $value)
-    {
-        $fqnn = $node->getFqnn();
-        if (!$node->hasTag($fqtn)) {
-            throw new RuntimeException('Node ' . $fqnn . ' does not have tagged ' . $fqtn);
-        }
-        $type = $node->getTag($fqtn)->getType();
-        if (!$type->hasField($field)) {
-            throw new RuntimeException('Type ' . $fqtn . ' does not have field ' . $field);
-        }
-
-        // clear old values
-        $stmt = $this->pdo->prepare(
-            'DELETE FROM property
-            WHERE fqnn=:fqnn, fqtn=:fqtn AND field=:field)
-            '
-        );
-        $stmt->execute(
-            [
-                'fqnn' => $fqnn,
-                'fqtn' => $fqtn,
-                'field' => $field,
-            ]
-        );
-        $values = $value;
-        if (!is_array($values)) {
-            $values = [$values];
-        }
-        foreach ($values as $value) {
+        if (!$this->hasNode($fqnn)) {
             $stmt = $this->pdo->prepare(
-                'INSERT INTO property
-                (fqnn, fqtn, field, value) VALUES (:fqnn, :fqtn, :field, :value)
+                'INSERT INTO node
+                (fqnn) VALUES(:fqnn)
                 '
             );
             $stmt->execute(
                 [
                     'fqnn' => $fqnn,
-                    'fqtn' => $fqtn,
-                    'field' => $field,
-                    'value' => $value,
                 ]
             );
         }
+
+        $stmt = $this->pdo->prepare(
+            'UPDATE node
+            set data=:data WHERE fqnn=:fqnn
+            '
+        );
+        $stmt->execute(
+            [
+                'fqnn' => $fqnn,
+                'data' => $data,
+            ]
+        );
     }
+
 }

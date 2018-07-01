@@ -55,10 +55,9 @@ class PackageLoader
         return array_keys($arr) !== range(0, count($arr) - 1);
     }
 
-    public function importNode($package, $name, $data)
+    public function importNode($package, $name, array $data)
     {
         $node = new Node($package, $name);
-
         foreach ($data as $typeName => $fields) {
             if (!$package->getGraph()->hasType($typeName)) {
                 throw new RuntimeException("Unknown type " . $typeName . ' for node ' . $node->getFqnn());
@@ -113,42 +112,65 @@ class PackageLoader
         }
     }
 
+    // public function loadDatabaseNodes(Package $package, PDO $pdo)
+    // {
+    //     $stmt = $pdo->prepare(
+    //         'SELECT node.fqnn, tag.fqtn, property.field, property.value
+    //         FROM node
+    //         LEFT JOIN tag ON tag.fqnn=node.fqnn
+    //         LEFT JOIN property ON
+    //             (
+    //                 property.fqnn=node.fqnn
+    //                 AND property.fqtn=tag.fqtn
+    //             )
+    //         '
+    //     );
+    //     $stmt->execute();
+    //     $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    //     $lastFqnn = null;
+    //     $data = [];
+    //     foreach ($rows as $row) {
+    //         $fqnn = $row['fqnn'];
+    //         $fqtn = $row['fqtn'];
+    //         $field = $row['field'];
+    //         $value = $row['value'];
+    //         if (!isset($datas[$fqnn])) {
+    //             $datas[$fqnn] = [];
+    //         }
+    //         if ($fqtn) {
+    //             if (!isset($datas[$fqnn][$fqtn])) {
+    //                 $datas[$fqnn][$fqtn] = [];
+    //             }
+    //             if ($field) {
+    //                 $datas[$fqnn][$fqtn][$field] = $value;
+    //             }
+    //         }
+    //     }
+    //     // print_r($datas);
+    //     foreach ($datas as $fqnn => $data) {
+    //         $part = explode(':', $fqnn);
+    //         $name = $part[2];
+    //         $node = $this->importNode($package, $name, $data);
+    //     }
+    // }
+
     public function loadDatabaseNodes(Package $package, PDO $pdo)
     {
         $stmt = $pdo->prepare(
-            'SELECT node.fqnn, tag.fqtn, property.field, property.value
+            'SELECT fqnn, data
             FROM node
-            LEFT JOIN tag ON tag.fqnn=node.fqnn
-            LEFT JOIN property ON
-                (
-                    property.fqnn=node.fqnn
-                    AND property.fqtn=tag.fqtn
-                )
             '
         );
         $stmt->execute();
         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        $lastFqnn = null;
-        $data = [];
+
         foreach ($rows as $row) {
             $fqnn = $row['fqnn'];
-            $fqtn = $row['fqtn'];
-            $field = $row['field'];
-            $value = $row['value'];
-            if (!isset($datas[$fqnn])) {
-                $datas[$fqnn] = [];
+            $yaml = $row['data'];
+            $data = [];
+            if ($yaml) {
+                $data = Yaml::parse($yaml);
             }
-            if ($fqtn) {
-                if (!isset($datas[$fqnn][$fqtn])) {
-                    $datas[$fqnn][$fqtn] = [];
-                }
-                if ($field) {
-                    $datas[$fqnn][$fqtn][$field] = $value;
-                }
-            }
-        }
-        // print_r($datas);
-        foreach ($datas as $fqnn => $data) {
             $part = explode(':', $fqnn);
             $name = $part[2];
             $node = $this->importNode($package, $name, $data);
