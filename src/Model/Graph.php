@@ -33,9 +33,13 @@ class Graph
         $this->packages[$package->getFqpn()] = $package;
     }
 
-    public function hasNode($id)
+    public function hasNode($fqnn)
     {
-        return isset($this->nodes[$id]);
+        $fqnn = Fqnn::byFqnn($fqnn);
+        $fqpn = $fqnn->getFqpn();
+        $package = $this->packages[$fqpn];
+
+        return $package->hasNode($fqnn->getName());
     }
 
     public function getNodes()
