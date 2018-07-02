@@ -183,30 +183,19 @@ class Graph
         $this->pdo = $pdo;
     }
 
-    public function persist($fqnn, $data)
+    public function persist(string $fqnn, string $yaml)
     {
-        if (!$this->hasNode($fqnn)) {
-            $stmt = $this->pdo->prepare(
-                'INSERT INTO node
-                (fqnn) VALUES(:fqnn)
-                '
-            );
-            $stmt->execute(
-                [
-                    'fqnn' => $fqnn,
-                ]
-            );
-        }
-
         $stmt = $this->pdo->prepare(
-            'UPDATE node
-            set data=:data WHERE fqnn=:fqnn
+            'INSERT INTO node
+            (fqnn, data) VALUES(:fqnn, :data)
+            ON DUPLICATE KEY UPDATE
+            data=:data
             '
         );
         $stmt->execute(
             [
                 'fqnn' => $fqnn,
-                'data' => $data,
+                'data' => $yaml
             ]
         );
     }
