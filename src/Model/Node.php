@@ -2,6 +2,7 @@
 
 namespace Networq\Model;
 
+use Symfony\Component\Yaml\Yaml;
 use ArrayAccess;
 use RuntimeException;
 
@@ -91,6 +92,28 @@ class Node implements ArrayAccess
 
     public function offsetGet($offset) {
         return $this->getTag($offset);
+    }
+
+    public function toData()
+    {
+        $data = [];
+        foreach ($this->tags as $tag) {
+            $tagData = [];
+            foreach ($tag->getProperties() as $property) {
+                if (!$property->getField()->getReverse()) {
+                    $tagData[$property->getField()->getName()] = $property->getValueRaw();
+                }
+            }
+            $data[$tag->getType()->getFqtn()] = $tagData;
+        }
+        return $data;
+    }
+
+    public function toYaml()
+    {
+        $yaml = Yaml::dump($this->toData(), 10, 4);
+        $yaml = str_replace(': {  }', ': ~', $yaml);
+        return $yaml;
     }
 
 }
