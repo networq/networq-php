@@ -10,16 +10,23 @@ class Node implements ArrayAccess
     protected $name;
     protected $package;
     protected $tags = [];
+    protected $editable;
 
-    public function __construct(Package $package, $name)
+    public function __construct(Package $package, $name, $editable = false)
     {
         $this->package = $package;
         $this->name = $name;
+        $this->editable = $editable;
     }
 
     public function getName()
     {
         return $this->name;
+    }
+
+    public function isEditable()
+    {
+        return $this->editable;
     }
 
     public function getPackage()
