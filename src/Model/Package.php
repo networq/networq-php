@@ -98,6 +98,11 @@ class Package
         $this->nodes[$node->getName()] = $node;
     }
 
+    public function hasNode($name)
+    {
+        return isset($this->nodes[$name]);
+    }
+
     public function getNode($name)
     {
         return $this->nodes[$name];
