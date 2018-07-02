@@ -55,35 +55,45 @@ class PackageLoader
         return array_keys($arr) !== range(0, count($arr) - 1);
     }
 
-    public function importNode($package, $name, array $data)
+    public function importNode($package, $name, array $data, bool $editable = false, Node $parent = null)
     {
-        $node = new Node($package, $name);
+        $node = new Node($package, $name, $editable);
         foreach ($data as $typeName => $fields) {
             if (!$package->getGraph()->hasType($typeName)) {
-                throw new RuntimeException("Unknown type " . $typeName . ' for node ' . $node->getFqnn());
-            }
-            $type = $package->getGraph()->getType($typeName);
-            $tag = new Tag($node, $type);
-            if (is_array($fields)) {
-                foreach ($fields as $k=>$v) {
-                    if (!$type->hasField($k)) {
-                        throw new RuntimeException("Unknown field: " . $type->getFqtn() . ' ' . $k . ' for node ' . $node->getFqnn());
-                    }
-                    $field = $type->getField($k);
-                    if (is_array($v)) {
-                        if ($this->isAssoc($v)) {
-
-                            $newNodes = [];
-                            foreach ($v as $n=>$d) {
-                                $this->importNode($package, $n, $d);
-                                $newNodes[] = $package->getFqpn() . ':' . $n;
+                //throw new RuntimeException("Unknown type " . $typeName . ' for node ' . $node->getFqnn());
+            } else {
+                $type = $package->getGraph()->getType($typeName);
+                $tag = new Tag($node, $type);
+                if (is_array($fields)) {
+                    foreach ($fields as $k=>$v) {
+                        if ($v=='$') {
+                            if ($parent) {
+                                $v = $parent->getFqnn();
                             }
-                            $v = $newNodes;
                         }
-                    }
+                        if (!$type->hasField($k)) {
+                            //throw new RuntimeException("Unknown field: " . $type->getFqtn() . ' ' . $k . ' for node ' . $node->getFqnn());
+                        } else {
+                            $field = $type->getField($k);
+                            if (is_array($v)) {
+                                if ($this->isAssoc($v)) {
 
-                    $p = $tag->getProperty($field->getName());
-                    $p->setValue($v);
+                                    $newNodes = [];
+                                    foreach ($v as $n=>$d) {
+                                        if ($n[0]=='~') {
+                                            $n = $name . $n;
+                                        }
+                                        $this->importNode($package, $n, $d, $editable, $node);
+                                        $newNodes[] = $package->getFqpn() . ':' . $n;
+                                    }
+                                    $v = $newNodes;
+                                }
+                            }
+                            $p = $tag->getProperty($field->getName());
+                            $p->setValue($v);
+                        }
+
+                    }
                 }
             }
             $node->addTag($tag);
@@ -173,7 +183,7 @@ class PackageLoader
             }
             $part = explode(':', $fqnn);
             $name = $part[2];
-            $node = $this->importNode($package, $name, $data);
+            $node = $this->importNode($package, $name, $data, true);
         }
     }
 
@@ -191,12 +201,14 @@ class PackageLoader
                 $data = Yaml::parse($yaml);
 
                 $type = new Type($package, $name);
-                foreach ($data['fields'] as $fieldName=>$fieldData) {
-                    $fieldType = $fieldData['type'];
+                if (isset($data['fields'])) {
+                    foreach ($data['fields'] as $fieldName=>$fieldData) {
+                        $fieldType = $fieldData['type'];
 
-                    $field = new Field($type, $fieldName, $fieldType);
-                    $field->setReverse($fieldData['reverse'] ?? null);
-                    $type->addField($field);
+                        $field = new Field($type, $fieldName, $fieldType);
+                        $field->setReverse($fieldData['reverse'] ?? null);
+                        $type->addField($field);
+                    }
                 }
                 $package->addType($type);
             }
