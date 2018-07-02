@@ -47,6 +47,8 @@ class Property
 
     public function getValue()
     {
+        $value = $this->value;
+
         if ($this->field->getReverse()) {
             $ft = $this->field->getType();
             $ft = str_replace('[]', '', $ft);
@@ -58,10 +60,15 @@ class Property
             $nodes = $ct->getNodesWhere($ft, $this->field->getReverse(), $this->tag->getNode()->getFqnn());
             return $nodes;
         }
-        $value = $this->value;
+        if (!$value) {
+            return $value;
+        }
         if ($this->field->getType()!='string') {
             $graph = $this->field->getNodeType()->getPackage()->getGraph();
             if (!is_array($this->value)) {
+                if (!$graph->hasNode($this->value)) {
+                    return null;
+                }
                 $value = $graph->getNode($this->value);
             } else {
                 $res = [];
