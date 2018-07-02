@@ -65,6 +65,9 @@ class GraphLoader
         $package = $this->loader->load($graph, $filename);
         $graph->addPackage($package);
         $envPath = rtrim(getenv('NETWORQ_PATH'), '/');
+        if (!$envPath) {
+            $envPath = '~/.nqp';
+        }
         foreach ($package->getDependencies() as $dep) {
             if (!$graph->hasPackage($dep->getName())) {
                 $filenames = [];
