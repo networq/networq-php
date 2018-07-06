@@ -19,38 +19,44 @@ final class TypeTest extends NetworqPHPTestCase
     }
 
     public function testContainsCorrectTypes() {
-        $this->assertEquals(["platform", "character", "game", "url", "base"], array_keys($this->types));
-        $this->assertEquals(
-            ["example:games:platform", "example:games:character", "example:games:game", "example:games:url", "example:games:base"],
-            array_map(function($type) { return $type->getFqtn(); }, array_values($this->types))
-        );
+        $actual1 = ["platform", "character", "game", "url", "base"];
+        $expected1 = array_keys($this->types);
+
+        sort($expected1) && sort($actual1);
+
+        $this->assertEquals($expected1, $actual1);
+
+        $expected2 = ["example:games:platform", "example:games:character", "example:games:game", "example:games:url", "example:games:base"];
+        $actual2 = array_map(function($type) { return $type->getFqtn(); }, array_values($this->types));
+
+        sort($expected2) && sort($actual2);
+
+        $this->assertEquals($expected2, $actual2);
     }
 
     public function testScheduleEqualsExpected() {
         $this->assertEquals([
-                "platform" => [
-                    "manufacturer" => "string"
-                ],
-                "character" => [
-                    "debut" => "example:games:game",
-                    "games" => "example:games:game[]"
-                ],
-                "game" => [
-                    "publisher" => "string",
-                    "platform" => "example:games:platform",
-                    "characters" => "example:games:character[]",
-                    "urls" => "example:games:url[]"
-                ],
-                "url" => [
-                    "target" => "string"
-                ],
-                "base" => [
-                    "name" => "string",
-                    "image" => "string",
-                    "description" => "string"
-                ],
+            "platform" => [
+                "manufacturer" => "string"
             ],
-            $this->getTypeSchedule($this->types)
+            "character" => [
+                "debut" => "example:games:game",
+                "games" => "example:games:game[]"
+            ],
+            "game" => [
+                "publisher" => "string",
+                "platform" => "example:games:platform",
+                "characters" => "example:games:character[]",
+                "urls" => "example:games:url[]"
+            ],
+            "url" => [
+                "target" => "string"
+            ],
+            "base" => [
+                "name" => "string",
+                "image" => "string",
+                "description" => "string"
+            ]], $this->getTypeSchedule($this->types)
         );
     }
 
