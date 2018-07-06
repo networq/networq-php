@@ -111,6 +111,10 @@ After installation you should be able to run the simple examples in `examples/`
 
 Please check https://github.com/networq/networq-web for an implementation of a web-based viewer.
 
+## Testing
+
+See `.circleci/config.yml` how to run tests. At the moment: run `./vendor/bin/phpunit --configuration phpunit.xml tests`.
+
 ## License
 
 MIT. Please refer to the [license file](LICENSE) for details.

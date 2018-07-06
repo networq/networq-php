@@ -1,7 +1,3 @@
-<phpunit bootstrap="example/common.php" colors="true">
-  <testsuites>
-    <testsuite name="tests">
-      <directory>tests/</directory>
-    </testsuite>
-  </testsuites>
+<phpunit colors="true" bootstrap="tests/bootstrap.php">
+
 </phpunit>
