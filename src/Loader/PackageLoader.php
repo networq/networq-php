@@ -201,7 +201,7 @@ class PackageLoader
                 $data = Yaml::parse($yaml);
 
                 $type = new Type($package, $name);
-                if (isset($data['fields'])) {
+                if (isset($data['fields']) && is_array($data['fields'])) {
                     foreach ($data['fields'] as $fieldName=>$fieldData) {
                         $fieldType = $fieldData['type'];
 
