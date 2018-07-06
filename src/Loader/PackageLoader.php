@@ -95,8 +95,8 @@ class PackageLoader
 
                     }
                 }
+                $node->addTag($tag);
             }
-            $node->addTag($tag);
         }
 
 
