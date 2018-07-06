@@ -16,5 +16,4 @@ parameters:
         phpunit:
             config_file: phpunit.xml
             testsuite: test
-            group: []
-            always_execute: false
+            always_execute: true
