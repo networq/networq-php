@@ -20,5 +20,9 @@
             "Networq\\": "src/"
         }
     },
-    "license": "MIT"
+    "license": "MIT",
+    "require-dev": {
+        "phpro/grumphp": "^0.14.1",
+        "phpunit/phpunit": "^7"
+    }
 }
