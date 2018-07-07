@@ -67,7 +67,9 @@ class Graph
     {
         $res = [];
         foreach ($this->packages as $package) {
-            $res = array_merge($res, $package->getTypes());
+            foreach ($package->getTypes() as $type) {
+                $res[$type->getFqtn()] = $type;
+            }
         }
         return $res;
     }

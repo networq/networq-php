@@ -19,7 +19,13 @@ final class TypeTest extends NetworqPHPTestCase
     }
 
     public function testContainsCorrectTypes() {
-        $actual1 = ["platform", "character", "game", "url", "base"];
+        $actual1 = [
+            "example:games:platform",
+            "example:games:character",
+            "example:games:game",
+            "example:games:url",
+            "example:games:base"
+        ];
         $expected1 = array_keys($this->types);
 
         sort($expected1) && sort($actual1);
@@ -36,23 +42,23 @@ final class TypeTest extends NetworqPHPTestCase
 
     public function testScheduleEqualsExpected() {
         $this->assertEquals([
-            "platform" => [
+            "example:games:platform" => [
                 "manufacturer" => "string"
             ],
-            "character" => [
+            "example:games:character" => [
                 "debut" => "example:games:game",
                 "games" => "example:games:game[]"
             ],
-            "game" => [
+            "example:games:game" => [
                 "publisher" => "string",
                 "platform" => "example:games:platform",
                 "characters" => "example:games:character[]",
                 "urls" => "example:games:url[]"
             ],
-            "url" => [
+            "example:games:url" => [
                 "target" => "string"
             ],
-            "base" => [
+            "example:games:base" => [
                 "name" => "string",
                 "image" => "string",
                 "description" => "string"
