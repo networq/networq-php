@@ -187,6 +187,26 @@ class Graph
         $this->pdo = $pdo;
     }
 
+    public function getNodeYaml(string $fqnn)
+    {
+        $stmt = $this->pdo->prepare(
+            'SELECT data
+            FROM node WHERE
+            fqnn=:fqnn
+            '
+        );
+        $stmt->execute(
+            [
+                'fqnn' => $fqnn
+            ]
+        );
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        if (!$row) {
+            return null;
+        }
+        return $row['data'];
+    }
+
     public function persist(string $fqnn, string $yaml)
     {
         $stmt = $this->pdo->prepare(
