@@ -95,7 +95,11 @@ class Graph
 
     public function hasType(string $fqtn)
     {
-        $fqtn = Fqnn::byFqnn($fqtn);
+        try {
+            $fqtn = Fqnn::byFqnn($fqtn);
+        } catch (\Exception $e) {
+            return false; // probably invalid fq format
+        }
         $fqpn = $fqtn->getFqpn();
         if (!$this->hasPackage($fqpn)) {
             return false;
