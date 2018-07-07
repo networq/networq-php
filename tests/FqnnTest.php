@@ -6,13 +6,6 @@ use Networq\Model\Fqnn;
 
 final class FqnnTest extends NetworqPHPTestCase
 {
-    protected $types;
-
-    protected function setUp()
-    {
-        $this->types = $this->getGraph()->getTypes();
-    }
-
     public function testFqnnConstructor(): void
     {
         $fqnn = Fqnn::byFqnn('networq:example:hello');
