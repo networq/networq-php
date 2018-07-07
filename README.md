@@ -1,6 +1,8 @@
 Networq PHP Library
 ================
 
+[![CircleCI](https://circleci.com/gh/networq/networq-php.svg?style=svg)](https://circleci.com/gh/networq/networq-php)
+
 This is a PHP library for [Networq](https://github.com/networq).
 
 It allows you to load Networq graphs, including it's dependencies, types and nodes.
