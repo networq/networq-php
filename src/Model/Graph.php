@@ -152,7 +152,10 @@ class Graph
 
     public function registerTwig(Twig_Environment $twig)
     {
-        $filter = new Twig_SimpleFilter('nodePath', function (Node $node) {
+        $filter = new Twig_SimpleFilter('nodePath', function (?Node $node) {
+            if (!$node) {
+                return '';
+            }
             return '/nodes/' . $node->getFqnn();
         });
         $twig->addFilter($filter);
