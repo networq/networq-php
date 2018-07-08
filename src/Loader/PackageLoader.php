@@ -62,7 +62,8 @@ class PackageLoader
         $node = new Node($package, $name, $editable);
         foreach ($data as $typeName => $fields) {
             if (!$package->getGraph()->hasType($typeName)) {
-                //throw new RuntimeException("Unknown type " . $typeName . ' for node ' . $node->getFqnn());
+                $issue = new Issue('REFERENCED_UNDEFINED_TYPE', 'Undefined type referenced: ' . $typeName, $node->getFqnn());
+                $package->addIssue($issue);
             } else {
                 $type = $package->getGraph()->getType($typeName);
                 $tag = new Tag($node, $type);
@@ -74,7 +75,8 @@ class PackageLoader
                             }
                         }
                         if (!$type->hasField($k)) {
-                            //throw new RuntimeException("Unknown field: " . $type->getFqtn() . ' ' . $k . ' for node ' . $node->getFqnn());
+                            $issue = new Issue('UNKNOWN_TYPE_FIELD', 'Unknown type-field: ' . $type->getFqtn() . '.' . $k, $node->getFqnn());
+                            $package->addIssue($issue);
                         } else {
                             $field = $type->getField($k);
                             if (is_array($v)) {
@@ -183,7 +185,7 @@ class PackageLoader
                 try {
                     $data = Yaml::parse($yaml);
                 } catch (ParseException $e) {
-                    $issue = new Issue('PARSE_ERROR', 'Error parsing YAML', $fqnn);
+                    $issue = new Issue('PARSE_ERROR', 'Error parsing YAML: ' . $e->getMessage(), $fqnn);
                     $package->addIssue($issue);
                 }
                 if (!is_array($data)) {
