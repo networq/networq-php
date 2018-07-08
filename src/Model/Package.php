@@ -17,6 +17,7 @@ class Package
     protected $widgets = [];
     protected $dependencies = [];
     protected $navNodeNames = [];
+    protected $issues = [];
 
     public function __construct(Graph $graph, array $data, string $path)
     {
@@ -154,6 +155,16 @@ class Package
     public function getWidget($name)
     {
         return $this->widgets[$name];
+    }
+
+    public function addIssue(Issue $issue)
+    {
+        $this->issues[] = $issue;
+    }
+
+    public function getIssues()
+    {
+        return $this->issues;
     }
 
 }

@@ -3,6 +3,7 @@
 namespace Networq\Loader;
 
 use Symfony\Component\Yaml\Yaml;
+use Symfony\Component\Yaml\Exception\ParseException;
 use Networq\Model\Graph;
 use Networq\Model\Package;
 use Networq\Model\Field;
@@ -11,6 +12,7 @@ use Networq\Model\Dependency;
 use Networq\Model\Tag;
 use Networq\Model\Node;
 use Networq\Model\Type;
+use Networq\Model\Issue;
 use Networq\Model\Widget;
 use RuntimeException;
 use RecursiveDirectoryIterator;
@@ -116,7 +118,6 @@ class PackageLoader
                 $name = substr(basename($filename), 0, -5);
                 $yaml = file_get_contents($filename);
                 $data = Yaml::parse($yaml);
-
                 $node = $this->importNode($package, $name, $data);
             }
         }
@@ -179,7 +180,17 @@ class PackageLoader
             $yaml = $row['data'];
             $data = [];
             if ($yaml) {
-                $data = Yaml::parse($yaml);
+                try {
+                    $data = Yaml::parse($yaml);
+                } catch (ParseException $e) {
+                    $issue = new Issue('PARSE_ERROR', 'Error parsing YAML', $fqnn);
+                    $package->addIssue($issue);
+                }
+                if (!is_array($data)) {
+                    $issue = new Issue('DATA_IS_NOT_ARRAY', 'Data contains valid YAML, but is not an array', $fqnn);
+                    $package->addIssue($issue);
+                    $data = [];
+                }
             }
             $part = explode(':', $fqnn);
             $name = $part[2];

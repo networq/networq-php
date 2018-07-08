@@ -74,6 +74,15 @@ class Graph
         return $res;
     }
 
+    public function getIssues()
+    {
+        $res = [];
+        foreach ($this->packages as $package) {
+            $res = array_merge($res, $package->getIssues());
+        }
+        return $res;
+    }
+
 
     public function getNodeWidgets(Node $node, string $hookName)
     {
