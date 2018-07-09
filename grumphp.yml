@@ -17,3 +17,61 @@ parameters:
             config_file: phpunit.xml
             testsuite: test
             always_execute: true
+        composer:
+            file: ./composer.json
+            no_check_all: false
+            no_check_lock: false
+            no_check_publish: false
+            no_local_repository: false
+            with_dependencies: false
+            strict: true
+        git_blacklist:
+            keywords:
+                - "die("
+                - "var_dump("
+                - "exit;"
+            whitelist_patterns: []
+            triggered_by: ['php']
+            regexp_type: G
+        jsonlint:
+            ignore_patterns: []
+            detect_key_conflicts: false
+        phpcpd:
+            directory: '.'
+            exclude: ['vendor', 'tests']
+            names_exclude: []
+            regexps_exclude: []
+            fuzzy: false
+            min_lines: 5
+            min_tokens: 70
+            triggered_by: ['php']
+        phplint:
+            exclude: []
+            jobs: ~
+            triggered_by: ['php']
+        phpspec:
+            config_file: ~
+            format: ~
+            stop_on_failure: false
+            verbose: false
+        phpversion:
+            project: '>=7.1'
+        securitychecker:
+            lockfile: ./composer.lock
+            format: ~
+            end_point: ~
+            timeout: ~
+            run_always: false
+        xmllint:
+            ignore_patterns: []
+            load_from_net: false
+            x_include: false
+            dtd_validation: false
+            scheme_validation: false
+            triggered_by: ['xml']
+        yamllint:
+            ignore_patterns: []
+            object_support: false
+            exception_on_invalid_type: false
+            parse_constant: false
+            parse_custom_tags: false
