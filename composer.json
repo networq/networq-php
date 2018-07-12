@@ -23,6 +23,10 @@
     "license": "MIT",
     "require-dev": {
         "phpro/grumphp": "^0.14.1",
-        "phpunit/phpunit": "^7"
+        "phpunit/phpunit": "^7",
+        "sebastian/phpcpd": "^4.0",
+        "jakub-onderka/php-parallel-lint": "^1.0",
+        "phpspec/phpspec": "^4.3",
+        "sensiolabs/security-checker": "^4.1"
     }
 }
