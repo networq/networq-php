@@ -83,6 +83,17 @@ class Graph
         return $res;
     }
 
+    public function getIssuesByFqnn($fqnn)
+    {
+        $res = [];
+        foreach ($this->getIssues() as $issue) {
+            if ($issue->getFqnn() == $fqnn) {
+                $res[] = $issue;
+            }
+        }
+        return $res;
+    }
+
 
     public function getNodeWidgets(Node $node, string $hookName)
     {
