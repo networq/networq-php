@@ -71,7 +71,15 @@ class GraphLoader
         $graph->addPackage($package);
         $envPath = rtrim(getenv('NETWORQ_PATH'), '/');
         if (!$envPath) {
-            $envPath = '~/.nqp';
+            if (isset($_SERVER['HOME'])) {
+                $envPath = $_SERVER['HOME'] . '/.nqp';
+            }
+            if (isset($_SERVER['HOMEDRIVE'])) {
+                $envPath = $_SERVER['HOMEDRIVE'] . $_SERVER['HOMEPATH'] . '/.nqp';
+            }
+            if (!file_exists($envPath)) {
+                $envPath = null;
+            }
         }
         foreach ($package->getDependencies() as $dep) {
             if (!$graph->hasPackage($dep->getName())) {
