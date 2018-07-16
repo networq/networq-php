@@ -37,6 +37,9 @@ class Graph
     {
         $fqnn = Fqnn::byFqnn($fqnn);
         $fqpn = $fqnn->getFqpn();
+        if (!$this->hasPackage($fqpn)) {
+            return false;
+        }
         $package = $this->packages[$fqpn];
 
         return $package->hasNode($fqnn->getName());
