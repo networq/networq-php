@@ -62,6 +62,11 @@ class GraphLoader
         foreach ($graph->getPackages() as $package) {
             $this->loader->loadQueries($package);
         }
+
+        // 6. verify nodes
+        foreach ($graph->getPackages() as $package) {
+            $this->loader->verifyNodes($package);
+        }
         return $graph;
     }
 

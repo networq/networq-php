@@ -127,6 +127,58 @@ class PackageLoader
         return $node;
     }
 
+    public function verifyNodes(Package $package)
+    {
+        $graph = $package->getGraph();
+
+        foreach ($package->getNodes() as $node) {
+            foreach ($node->getTags() as $tag) {
+                foreach ($tag->getProperties() as $property) {
+                    $field=$property->getField();
+                    $v = $property->getValueRaw();
+
+                    if ($field->getType()!='string') {
+                        if ($v) {
+                            if (!is_array($v)) {
+                                if (!$graph->hasNode($v)) {
+                                    $issue = new Issue(
+                                        'UNKNOWN_NODE_REFERENCED',
+                                        'Node `' . $node->getFqnn() . '` is referencing unknown node  `'. $v . '`.',
+                                        $node->getFqnn()
+                                    );
+                                    $package->addIssue($issue);
+                                } else {
+                                    $refNode = $graph->getNode($v);
+                                    if (!$refNode->hasTag($field->getType())) {
+                                        $issue = new Issue(
+                                            'NODE_NOT_TAGGED_WITH_REQUIRED_TYPE',
+                                            'Node `' . $node->getFqnn() . '` is referencing node  `'. $v . '` which is not tagged with required type `' . $field->getType() . '`.',
+                                            $node->getFqnn()
+                                        );
+                                        $package->addIssue($issue);
+                                    }
+                                }
+                            } else {
+                                foreach ($v as $v2) {
+                                    if (!$graph->hasNode($v2)) {
+                                        //return null;
+                                        $issue = new Issue(
+                                            'UNKNOWN_NODE_REFERENCED',
+                                            'Node `' . $node->getFqnn() . '` is referencing unknown node  `'. $v2 . '`.',
+                                            $node->getFqnn()
+                                        );
+                                        $package->addIssue($issue);
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                }
+            }
+        }
+    }
+
     public function loadNodes(Package $package, $dir = '/nodes')
     {
         $path = $package->getPath() . $dir;
