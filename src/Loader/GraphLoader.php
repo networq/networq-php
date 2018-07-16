@@ -84,10 +84,8 @@ class GraphLoader
         foreach ($package->getDependencies() as $dep) {
             if (!$graph->hasPackage($dep->getName())) {
                 $filenames = [];
-                $filenames[] = dirname($filename) . '/packages/' . str_replace(':', '/', $dep->getName()) . '-package/package.yaml';
                 $filenames[] = dirname($filename) . '/packages/' . str_replace(':', '/', $dep->getName()) . '/package.yaml';
                 if ($envPath) {
-                    $filenames[] =  $envPath . '/' . str_replace(':', '/', $dep->getName()) . '-package/package.yaml';
                     $filenames[] =  $envPath . '/' . str_replace(':', '/', $dep->getName()) . '/package.yaml';
                 }
                 $depFilename = null;
