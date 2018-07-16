@@ -10,6 +10,7 @@ class Widget  // implements ArrayAccess
     protected $name;
     protected $typeName;
     protected $hookName;
+    protected $queryName;
     protected $label;
 
     public function __construct(Package $package, $name, $typeName, $hookName)
@@ -35,6 +36,11 @@ class Widget  // implements ArrayAccess
         return $this->package;
     }
 
+    public function getFqwn()
+    {
+        return $this->package->getFqpn() . ':' . $this->name;
+    }
+
     public function getName()
     {
         return $this->name;
@@ -53,6 +59,16 @@ class Widget  // implements ArrayAccess
     public function getTemplateName()
     {
         return '@' . $this->package->getFqpn() . '/' . $this->name . '.html.twig';
+    }
+
+    public function setQueryName($queryName)
+    {
+        $this->queryName = $queryName;
+    }
+
+    public function getQueryName()
+    {
+        return $this->queryName;
     }
 
 }

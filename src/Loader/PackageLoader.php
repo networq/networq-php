@@ -12,6 +12,7 @@ use Networq\Model\Dependency;
 use Networq\Model\Tag;
 use Networq\Model\Node;
 use Networq\Model\Type;
+use Networq\Model\Query;
 use Networq\Model\Issue;
 use Networq\Model\Widget;
 use RuntimeException;
@@ -224,6 +225,34 @@ class PackageLoader
                     }
                 }
                 $package->addType($type);
+            }
+        }
+    }
+
+    public function loadQueries(Package $package)
+    {
+        $path = $package->getPath();
+        if (!file_exists($path . '/queries')) {
+            return;
+        }
+        $it = new RecursiveDirectoryIterator($path . '/queries');
+        foreach (new RecursiveIteratorIterator($it) as $filename) {
+            if (substr($filename, -5, 5)=='.yaml') {
+                $name = substr(basename($filename), 0, -5);
+                $yaml = file_get_contents($filename);
+                $data = Yaml::parse($yaml);
+
+                $query = new Query($package, $name, $data);
+                // if (isset($data['fields']) && is_array($data['fields'])) {
+                //     foreach ($data['fields'] as $fieldName=>$fieldData) {
+                //         $fieldType = $fieldData['type'];
+
+                //         $field = new Field($type, $fieldName, $fieldType);
+                //         $field->setReverse($fieldData['reverse'] ?? null);
+                //         $type->addField($field);
+                //     }
+                // }
+                $package->addQuery($query);
             }
         }
     }

@@ -74,6 +74,42 @@ class Graph
         return $res;
     }
 
+    public function getQueries()
+    {
+        $res = [];
+        foreach ($this->packages as $package) {
+            foreach ($package->getQueries() as $query) {
+                $res[$query->getFqqn()] = $query;
+            }
+        }
+        return $res;
+    }
+
+    public function getQuery(string $fqqn)
+    {
+        // if (!$this->hasQuery($fqqn)) {
+        //     throw new RuntimeException("Undefined query: " . $fqqn);
+        // }
+        $fqqn = Fqnn::byFqnn($fqqn);
+        $fqpn = $fqqn->getFqpn();
+        $package = $this->packages[$fqpn];
+
+        return $package->getQuery($fqqn->getName());
+    }
+
+    public function getWidget(string $fqwn)
+    {
+        // if (!$this->hasQuery($fqqn)) {
+        //     throw new RuntimeException("Undefined query: " . $fqqn);
+        // }
+        $fqwn = Fqnn::byFqnn($fqwn);
+        $fqpn = $fqwn->getFqpn();
+        $package = $this->packages[$fqpn];
+
+        return $package->getWidget($fqwn->getName());
+    }
+
+
     public function getIssues()
     {
         $res = [];
@@ -247,6 +283,53 @@ class Graph
                 'data' => $yaml
             ]
         );
+    }
+
+    public function runQuery(Node $node, Query $query)
+    {
+        return $this->runQueryStatement($node, $query->getStatement());
+    }
+
+    protected function runQueryStatement(Node $node, array $statement)
+    {
+        $data = [];
+        foreach ($statement as $typeName => $fieldStatements) {
+            if (!$this->hasType($typeName)) {
+                throw new RuntimeException("Query references undefined type: " . $typeName);
+            }
+            $type = $this->getType($typeName);
+            $typeData = [];
+            if ($node->hasTag($typeName)) {
+                $tag = $node->getTag($typeName);
+                foreach ($fieldStatements as $fieldName => $fieldStatement) {
+                    if (!$type->hasField($fieldName)) {
+                        throw new RuntimeException("Query references undefined field on type: " . $typeName . '.' . $fieldName);
+                    }
+                    $field = $type->getField($fieldName);
+                    $fieldValue = null;
+                    if ($field->isString()) {
+                        $fieldValue = $tag[$fieldName];
+                    }
+                    if ($field->isNodeListType()) {
+                        $fieldValue = [];
+                        $nodes = $tag[$fieldName];
+                        foreach ($nodes as $subNode) {
+                            $fieldValue[$subNode->getFqnn()] = $this->runQueryStatement($subNode, $fieldStatement);
+                        }
+                    }
+                    if ($field->isNodeType()) {
+                        $fieldValue = [];
+                        $subNode = $tag[$fieldName];
+                        $fieldValue[$subNode->getFqnn()] = $this->runQueryStatement($subNode, $fieldStatement);
+                    }
+                    $typeData[$fieldName] = $fieldValue;
+                }
+            } else {
+                // noop
+            }
+            $data[$typeName] = $typeData;
+        }
+        return $data;
     }
 
 }

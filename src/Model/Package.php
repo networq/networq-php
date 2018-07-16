@@ -14,6 +14,7 @@ class Package
 
     protected $nodes = [];
     protected $types = [];
+    protected $queries = [];
     protected $widgets = [];
     protected $dependencies = [];
     protected $navNodeNames = [];
@@ -155,6 +156,22 @@ class Package
     public function getWidget($name)
     {
         return $this->widgets[$name];
+    }
+
+
+    public function getQueries()
+    {
+        return $this->queries;
+    }
+
+    public function addQuery(Query $query)
+    {
+        $this->queries[$query->getName()] = $query;
+    }
+
+    public function getQuery($name)
+    {
+        return $this->queries[$name];
     }
 
     public function addIssue(Issue $issue)

@@ -57,6 +57,11 @@ class GraphLoader
         foreach ($graph->getPackages() as $package) {
             $this->loader->loadWidgets($package);
         }
+
+        // 5. load queries from packages
+        foreach ($graph->getPackages() as $package) {
+            $this->loader->loadQueries($package);
+        }
         return $graph;
     }
 
