@@ -61,9 +61,23 @@ class PackageLoader
     public function importNode($package, $name, array $data, bool $editable = false, Node $parent = null)
     {
         $node = new Node($package, $name, $editable);
+        $graph = $package->getGraph();
         foreach ($data as $typeName => $fields) {
-            if (!$package->getGraph()->hasType($typeName)) {
-                $issue = new Issue('REFERENCED_UNDEFINED_TYPE', 'Undefined type referenced: ' . $typeName, $node->getFqnn());
+            if (!$graph->hasType($typeName)) {
+                $typePackageName = substr($typeName, 0, strrpos($typeName, ':'));
+                if (!$graph->hasPackage($typePackageName)) {
+                    $issue = new Issue(
+                        'NODE_TAGGED_WITH_TYPE_IN_UNDEFINED_PACKAGE',
+                        'Node `' . $node->getFqnn() . '` is tagged with type `' . $typeName .
+                        '`. But the package `' . $typePackageName . '` is not (yet) loaded in this graph.', $node->getFqnn()
+                    );
+                } else {
+                    $issue = new Issue(
+                        'NODE_TAGGED_WITH_UNDEFINED_TYPE',
+                        'Node ' . $node->getFqnn() . ' is tagged with undefined type `' . $typeName .
+                        '`. Check the package `' . $typePackageName . '`.', $node->getFqnn()
+                    );
+                }
                 $package->addIssue($issue);
             } else {
                 $type = $package->getGraph()->getType($typeName);
@@ -76,7 +90,11 @@ class PackageLoader
                             }
                         }
                         if (!$type->hasField($k)) {
-                            $issue = new Issue('UNKNOWN_TYPE_FIELD', 'Unknown type-field: ' . $type->getFqtn() . '.' . $k, $node->getFqnn());
+                            $issue = new Issue(
+                                'UNKNOWN_TYPE_FIELD',
+                                'Node `' . $node->getFqnn() . '` is setting undefined field `'. $k . '` on type `' . $type->getFqtn() . '`.',
+                                $node->getFqnn()
+                            );
                             $package->addIssue($issue);
                         } else {
                             $field = $type->getField($k);
