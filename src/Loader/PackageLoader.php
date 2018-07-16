@@ -346,6 +346,7 @@ class PackageLoader
 
             $widget = new Widget($package, $name, $typeName, $hookName);
             $widget->setLabel($w['label'] ?? 'UNDEFINED');
+            $widget->setQueryName($w['query'] ?? null);
             $package->addWidget($widget);
         }
     }
